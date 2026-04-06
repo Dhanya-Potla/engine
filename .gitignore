@@ -1,0 +1,10 @@
+﻿__pycache__/
+*.pyc
+.env
+.ipynb_checkpoints/
+node_modules/
+
+# Large datasets / archives — GitHub max ~100 MB per file; keep local only
+zomato.csv
+zomato_restaurants_in_India.csv
+rcmd_engine.zip

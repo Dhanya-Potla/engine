@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexora | Geo-Recommender</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Style -->
+    <link rel="stylesheet" href="/static/style.css?v=2">
+    <!-- Phosphor Icons for elegant icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Google Maps Places library (Placeholder key) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY_HERE&libraries=places"></script>
+</head>
+<body>
+    <div class="background-mesh">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="logo">
+            <i class="ph ph-planet"></i>
+            <span>Nexora</span>
+        </div>
+        <div class="nav-links">
+            <button class="icon-btn" id="themeToggle"><i class="ph ph-moon"></i></button>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Hero Section for Location & Intro -->
+        <section class="hero-section" id="hero">
+            <div class="hero-content">
+                <div class="badge">Advanced Engine v2.0</div>
+                <h1>Discover the <span class="text-gradient">Best Places</span> Around You</h1>
+                <p>Allow location access to let Nexora's AI uncover hidden gems, trending spots, and personalized recommendations based on time, budget, and occasion.</p>
+                
+                <button class="primary-btn pulse-anim" id="locateBtn">
+                    <i class="ph-fill ph-navigation-arrow"></i>
+                    Detect My Location
+                </button>
+
+                <div class="location-search-box">
+                    <p class="or-divider"><span>OR</span></p>
+                    <div class="manual-location-flex">
+                        <div class="input-wrapper">
+                            <i class="ph ph-map-pin"></i>
+                            <input type="text" id="manualLocation" placeholder="e.g. Marathahalli, JP Nagar, Bangalore...">
+                        </div>
+                        <button class="primary-btn small" id="manualLocBtn">Search Loc</button>
+                    </div>
+                </div>
+
+                <div id="locationStatus" class="status-message"></div>
+            </div>
+        </section>
+
+        <!-- Filters Section (Hidden initially) -->
+        <section class="filters-section hidden" id="filters">
+            <div class="filter-glass">
+                <div class="filter-group">
+                    <label>Cuisine / Craving</label>
+                    <div class="input-wrapper">
+                        <i class="ph ph-magnifying-glass"></i>
+                        <input type="text" id="cuisineFilter" placeholder="e.g. Biryani, Italian, Coffee">
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Occasion</label>
+                    <select id="occasionFilter">
+                        <option value="">Any Occasion</option>
+                        <option value="casual">Casual Dining</option>
+                        <option value="date">Date Night</option>
+                        <option value="family">Family Gathering</option>
+                        <option value="business">Business Meeting</option>
+                        <option value="quick_bite">Quick Bite</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label>Time & Budget</label>
+                    <div class="split-selects">
+                        <select id="timeFilter">
+                            <option value="">Any Time</option>
+                            <option value="breakfast">Breakfast</option>
+                            <option value="lunch">Lunch</option>
+                            <option value="dinner">Dinner</option>
+                            <option value="late_night">Late Night</option>
+                        </select>
+                        <select id="budgetFilter">
+                            <option value="">Any Budget</option>
+                            <option value="budget">Budget</option>
+                            <option value="moderate">Moderate</option>
+                            <option value="expensive">Expensive</option>
+                            <option value="luxury">Luxury</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="filter-action">
+                    <button class="primary-btn small" id="searchBtn">
+                        Apply Filters
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Results Map/Grid -->
+        <section class="results-section hidden" id="resultsArea">
+            <div class="results-header">
+                <h2>Top Recommendations</h2>
+                <div class="view-toggles">
+                    <!-- Placeholder if we add map later -->
+                </div>
+            </div>
+            
+            <div id="loader" class="loader hidden">
+                <div class="spinner"></div>
+                <p>Running Spatial LSA Models...</p>
+            </div>
+            
+            <div class="cards-grid" id="cardsGrid">
+                <!-- Data injected here via JS -->
+            </div>
+        </section>
+        
+    </main>
+
+    <!-- Footer for Professional Details -->
+    <footer class="app-footer">
+        <div class="footer-content">
+            <p>Designed & Developed by <span class="text-gradient font-bold">Dhanya Potla</span></p>
+            <p class="professional-title">Data Science Student | Machine Learning & AI Developer</p>
+            <div class="social-links">
+                <a href="https://www.linkedin.com/in/dhanyapotla/" target="_blank" class="social-icon" title="LinkedIn"><i class="ph ph-linkedin-logo"></i></a>
+                <a href="https://github.com/Dhanya-Potla" target="_blank" class="social-icon" title="GitHub"><i class="ph ph-github-logo"></i></a>
+                <a href="mailto:dhanyasripotla@gmail.com" target="_blank" class="social-icon" title="Email"><i class="ph ph-envelope-simple"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Place Details Modal -->
+    <div id="placeModal" class="modal hidden">
+        <div class="modal-content">
+            <button id="closeModalBtn" class="icon-btn close-btn"><i class="ph ph-x"></i></button>
+            <div id="modalLoading" class="modal-loading hidden">
+                <div class="spinner"></div>
+                <p>Loading details...</p>
+            </div>
+            <div id="modalPhotos" class="modal-photos"></div>
+            <div class="modal-details">
+                <h2 id="modalTitle">Restaurant Name</h2>
+                <p id="modalLocality" class="modal-locality"></p>
+                <a id="directionsBtn" href="#" target="_blank" class="primary-btn">
+                    <i class="ph-fill ph-navigation-arrow"></i> Get Directions
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/app.js?v=2"></script>
+</body>
+</html>
